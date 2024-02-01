@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.arthuracrani.domain.User;
+import com.arthuracrani.dto.UserDTO;
 import com.arthuracrani.exception.ObjectNotFoundException;
 import com.arthuracrani.repository.UserRepository;
 
@@ -22,5 +23,27 @@ public class UserService {
 	public User findById(String id) {
 		Optional<User> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
+	}
+	public User insert(User obj) {
+		return repo.insert(obj);
+	}
+
+	public User update(User obj) {
+		User newObj = findById(obj.getId());
+		updateData(newObj, obj);
+		return repo.save(newObj);
+	}
+
+	private void updateData(User newObj, User obj) {
+		newObj.setName(obj.getName());
+		newObj.setEmail(obj.getEmail());
+	}
+	//pega um DTO e instancia um usuario
+	public User fromDTO(UserDTO objDto) {
+		return new User(objDto.getId(), objDto.getName(), objDto.getEmail());
+	}
+	public void delete(String id) {
+		findById(id);
+		repo.deleteById(id);
 	}
 }
