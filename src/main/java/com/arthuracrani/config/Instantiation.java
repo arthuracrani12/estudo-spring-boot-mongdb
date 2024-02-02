@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.arthuracrani.domain.Post;
 import com.arthuracrani.domain.User;
+import com.arthuracrani.dto.AuthorDTO;
 import com.arthuracrani.repository.PostRepository;
 import com.arthuracrani.repository.UserRepository;
 
@@ -38,12 +39,18 @@ public class Instantiation implements CommandLineRunner {
 		User alex = new User(null, "Alex Green", "alex@gmail.com");
 		User bob = new User(null, "Bob Grey", "bob@gmail.com");
 		
-		Post post1 = new Post(null, sdf.parse("21/03/2018"), "Partiu viagem", "Vou viajar para São Paulo. Abraços!", maria);
-		Post post2 = new Post(null, sdf.parse("23/03/2018"), "Bom dia", "Acordei feliz hoje!", maria);
+		//salvar primeiro os usuarios para que gere o ID e tenho salve o post paraa já buscar com o id
+		userReposiroty.saveAll(Arrays.asList(maria, alex, bob));
+		
+		Post post1 = new Post(null, sdf.parse("21/03/2018"), "Partiu viagem", "Vou viajar para São Paulo. Abraços!", new AuthorDTO(maria));
+		Post post2 = new Post(null, sdf.parse("23/03/2018"), "Bom dia", "Acordei feliz hoje!", new AuthorDTO(maria));
 
 		//salva os objetos na coleção de usuario
-		userReposiroty.saveAll(Arrays.asList(maria, alex, bob));
+	
 		postReposiroty.saveAll(Arrays.asList(post1, post2));
+		
+		maria.getPosts().addAll(Arrays.asList(post1, post2));
+		userReposiroty.save(maria);
 	}
 	
 	
